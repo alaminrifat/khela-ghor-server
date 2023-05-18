@@ -50,19 +50,26 @@ async function run() {
             res.send(toys);
         });
         // mytoys
-        app.get("/mytoys",async(req,res)=>{
-          const query = { SellerEmail: req.query.email };
-          const cursor = toyCollection.find(query);
-          const toys = await cursor.toArray();
-          res.send(toys);
-        })
+        app.get("/mytoys", async (req, res) => {
+            const query = { SellerEmail: req.query.email };
+            const cursor = toyCollection.find(query);
+            const toys = await cursor.toArray();
+            res.send(toys);
+        });
         // delete my toy
-        app.delete('/mytoys/:id', async (req, res) => {
+        app.delete("/mytoys/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await toyCollection.deleteOne(query);
+            res.send(result);
+        });
+        // get a toy
+        app.get("/toy/:id", async (req,res) =>{
           const id = req.params.id;
-          const query = { _id: new ObjectId(id) }
-          const result = await toyCollection.deleteOne(query);
+          const query = { _id: new ObjectId(id)}
+          const result = await toyCollection.findOne(query);
           res.send(result);
-      })
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
