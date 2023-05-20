@@ -9,7 +9,7 @@ app.use(express.json());
 const corsConfig = {
     origin: "*",
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS","PUT"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS", "PUT"],
 };
 app.use(cors(corsConfig));
 app.use(cors());
@@ -42,7 +42,6 @@ async function run() {
         app.get("/toys", async (req, res) => {
             let query = {};
             if (req.query.name) {
-                console.log("name hitted");
                 query = { ToyName: req.query.name };
             }
             const cursor = toyCollection.find(query).limit(20);
@@ -52,9 +51,24 @@ async function run() {
         // mytoys
         app.get("/mytoys", async (req, res) => {
             const query = { SellerEmail: req.query.email };
-            const cursor = toyCollection.find(query);
-            const toys = await cursor.toArray();
-            res.send(toys);
+            const sortType = req.query.sort;
+            console.log(sortType);
+            if (sortType == "asc") {
+                const cursor = await toyCollection
+                    .find(query)
+                    .sort({ Price: 1 })
+                    .toArray();
+                return res.send(cursor);
+            } else if (sortType == "desc") {
+                const cursor = await toyCollection
+                    .find(query)
+                    .sort({ Price: -1 })
+                    .toArray();
+                return res.send(cursor);
+            } else {
+                const cursor = await toyCollection.find(query).toArray();
+                return res.send(cursor);
+            }
         });
         // delete my toy
         app.delete("/mytoys/:id", async (req, res) => {
