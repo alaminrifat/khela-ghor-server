@@ -53,7 +53,7 @@ async function run() {
             const category = req.params.category;
             console.log(category);
             query = { Category: category };
-            const cursor = toyCollection.find(query).limit(6);
+            const cursor = toyCollection.find(query).limit(6); //don't need to display all product on home page
             const toys = await cursor.toArray();
             res.send(toys);
         })
@@ -66,13 +66,13 @@ async function run() {
             if (sortType == "asc") {
                 const cursor = await toyCollection
                     .find(query)
-                    .sort({ Price: 1 })
+                    .sort({ Price: 1 }) //for ascending order
                     .toArray();
                 return res.send(cursor);
             } else if (sortType == "desc") {
                 const cursor = await toyCollection
                     .find(query)
-                    .sort({ Price: -1 })
+                    .sort({ Price: -1 }) //for descending order
                     .toArray();
                 return res.send(cursor);
             } else {
