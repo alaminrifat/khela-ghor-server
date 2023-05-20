@@ -48,6 +48,16 @@ async function run() {
             const toys = await cursor.toArray();
             res.send(toys);
         });
+        // get toys on tab (categorical data load)
+        app.get("/toys/:category", async(req,res) =>{
+            const category = req.params.category;
+            console.log(category);
+            query = { Category: category };
+            const cursor = toyCollection.find(query).limit(6);
+            const toys = await cursor.toArray();
+            res.send(toys);
+        })
+
         // mytoys
         app.get("/mytoys", async (req, res) => {
             const query = { SellerEmail: req.query.email };
