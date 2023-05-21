@@ -5,14 +5,26 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(express.json());
 const corsConfig = {
     origin: "*",
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS", "PUT"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: [
+        "Content-Type",
+        "Origin",
+        "X-Requested-With",
+        "Accept",
+        "x-client-key",
+        "x-client-token",
+        "x-client-secret",
+        "Authorization",
+    ],
+    credentials: true,
 };
 app.use(cors(corsConfig));
-app.use(cors());
+app.options("*", cors(corsConfig));
+app.use(express.json());
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.vhaictv.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -27,7 +39,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-         client.connect();
+        //  client.connect();
         const toyCollection = client.db("khelaGhor").collection("toys");
 
         // get toys
