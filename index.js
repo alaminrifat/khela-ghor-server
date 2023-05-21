@@ -27,16 +27,8 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+         client.connect();
         const toyCollection = client.db("khelaGhor").collection("toys");
-
-        // add a toy
-        app.post("/addtoy", async (req, res) => {
-            const toy = req.body;
-            console.log(toy);
-            const result = await toyCollection.insertOne(toy);
-            res.send(result);
-        });
 
         // get toys
         app.get("/toys", async (req, res) => {
@@ -49,14 +41,14 @@ async function run() {
             res.send(toys);
         });
         // get toys on tab (categorical data load)
-        app.get("/toys/:category", async(req,res) =>{
+        app.get("/toys/:category", async (req, res) => {
             const category = req.params.category;
             console.log(category);
             query = { Category: category };
             const cursor = toyCollection.find(query).limit(6); //don't need to display all product on home page
             const toys = await cursor.toArray();
             res.send(toys);
-        })
+        });
 
         // mytoys
         app.get("/mytoys", async (req, res) => {
@@ -87,6 +79,15 @@ async function run() {
             const result = await toyCollection.deleteOne(query);
             res.send(result);
         });
+
+        // get a toy
+        app.get("/toy/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await toyCollection.findOne(query);
+            res.send(result);
+        });
+
         // edit a toy
         app.put("/edittoy/:id", async (req, res) => {
             const id = req.params.id;
@@ -120,11 +121,11 @@ async function run() {
             const result = await toyCollection.updateOne(filter, updateDoc);
             res.send(result);
         });
-        // get a toy
-        app.get("/toy/:id", async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) };
-            const result = await toyCollection.findOne(query);
+        // add a toy
+        app.post("/addtoy", async (req, res) => {
+            const toy = req.body;
+            console.log(toy);
+            const result = await toyCollection.insertOne(toy);
             res.send(result);
         });
 
